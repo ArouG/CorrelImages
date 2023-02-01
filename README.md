@@ -29,3 +29,6 @@ finalement :
 h) détermination de 2 blocs "communs" et
 
 i) calcul de la distance entre ces deux  blocks.
+
+# Améliorations :
+Citons le filtrage des paramètres d'entrée ... (function initialise_parametres_initiaux ) et ajout d'un dernier paramètre : le nombre minimal de "good matches" nécessaires avant de continuer le process (fixé à 10 dans CorrelImages à ce jour)
