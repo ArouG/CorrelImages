@@ -11,14 +11,21 @@ Try to build a number between 0 and 100 for matching 2 images ...
 # Algorithme d'ensemble :
 
 a) passage d'une image couleur en image à nuance de gris
+
 b) égalisation éventuelle de l'histogramme (normalisation d'image)
+
 c) détermination des points remarquables par l'algorithme "Fast Corners" (Jsfeat)
+
 d) diminution des points remarquables avec homogéinisation dans l'espace (ANMS)
+
 e) créations de descripteurs ORB pour les points résultants permettant (Jsfeat) :
 
 f) de "matcher" les deux images ( Jsfeat )
+
 g) et utilisation de Ransac pour filtrer parmi mes points récupérés à l'étape précédente ceux résultant "au mieux" d'une transformation reliant les 2 iùages
 
 finalement :
+
 h) détermination de 2 blocs "communs" et
+
 i) calcul de la distance entre ces deux  blocks.
