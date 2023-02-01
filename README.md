@@ -20,9 +20,9 @@ d) diminution des points remarquables avec homogéinisation dans l'espace (ANMS)
 
 e) créations de descripteurs ORB pour les points résultants permettant (Jsfeat) :
 
-f) de "matcher" les deux images ( Jsfeat )
+f) de "matcher" les descripteurs / points remarquables des deux images ( Jsfeat )
 
-g) et utilisation de Ransac pour filtrer parmi mes points récupérés à l'étape précédente ceux résultant "au mieux" d'une transformation reliant les 2 iùages
+g) et utilisation de Ransac pour filtrer parmi mes points récupérés à l'étape précédente ceux résultant "au mieux" d'une transformation reliant les 2 images
 
 finalement :
 
