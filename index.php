@@ -1,8 +1,11 @@
 <?php
 //----------------------------------------
 //          versionning
-// CorrelImages :   0.1 : 2023/01/27
+// CorrelImages :   1.3 : 2023/02/02
+//                        lègère modification pour prise en compte (couleurs) du cas ou Nombres de Matches insuffisant
+// CorrelImages :   1.2 : 2023/01/31
 // CorrelImages :   1.0 : 2023/01/29
+// CorrelImages :   0.1 : 2023/01/27
 //   fichier PHP type pour une application
 //----------------------------------------  
 
@@ -55,24 +58,24 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
   $db = Null; 
 
 /*  variable pour affichage titre / version / nbre de vue   */
-  $Versiondu = 'V 1.2 du 01/02/2023';
+  $Versiondu = 'V 1.3 du 02/02/2023';
 
 ?>
     <!DOCTYPE html>
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
 
     <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-        <meta http-equiv="cache-control" content="no-cache, must-revalidate" />
-        <meta http-equiv="Pragma" content="no-cache" />
-        <meta http-equiv="Expires" content="0" />
-        <meta name="DC.Language" content="fr" />
-        <meta name="description" content="indice coefficient de corrélation entre deux images" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <meta http-equiv="cache-control" content="no-cache, must-revalidate"/>
+        <meta http-equiv="Pragma" content="no-cache"/>
+        <meta http-equiv="Expires" content="0"/>
+        <meta name="DC.Language" content="fr"/>
+        <meta name="description" content="indice coefficient de corrélation entre deux images"/>
         <meta name="author" content="ArouG" />
-        <meta name="keywords" content="corrélation images tailles différentes" />
-        <meta name="date" content="2023/01/27" />
-        <meta name="robots" content="nofollow" />
+        <meta name="keywords" content="corrélation images tailles différentes"/>
+        <meta name="date" content="2023/01/27"/>
+        <meta name="robots" content="nofollow"/>
         <title>Correlimages</title>
         <style>
         html {
@@ -212,20 +215,29 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
         #TmsQG, #TmsT{
             background-color: #00FFF0;    
         }
-        #QC, #QG {
+        .QCG {
             background-color: rgba(0, 220, 0, 1); 
             color: white;   
         }
-        .bad{
+        .bad{            /* pour QC et NbGM */
             background-color: rgba(255, 0, 0, 1); 
             color: white;              
         }
+        .goodQC{
+            background-color: rgba(0, 220, 0, 1);
+            color: black;
+        }
+        .goodNbGM{
+            background-color: #FFDEAD;
+            color: black;
+        }
+        /*
         .infobulle{
             color:#C00;
             text-decoration:none;
             border-bottom: 1px dotted;
             font-weight: bold;
-        }
+        } */
         #basdepage {
             margin: 0;
             padding: 0;
@@ -318,9 +330,10 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
 
         </style>
         <!-- source JSFEAT : https://github.com/inspirit/jsfeat -->
-        <script type="text/javascript" src="./js/jsfeat-min.js"></script>
-        <script type="text/javascript" src="./js/modernizr-custom.js"></script>
-        <script type="text/javascript">
+        <!--script src="./js/jsfeat.js"></script-->
+        <script src="./js/jsfeat-min.js"></script>
+        <script src="./js/modernizr-custom.js"></script>
+        <script>
 
         "use strict";
 
@@ -823,6 +836,9 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
                 ligne += 'FxAx;FxCx;FyAy;FyCy;BoxOrigxO;BoxOrigyO;BoxOrigxD;BorOrigyD;BoxDestxO;BoxDestyO;BoxDestxD;BoxDestyD'+'\n';
                 localStorage.setItem('Correltest', ligne);
             }
+            document.querySelector('#QC').className = 'QCG';
+            document.querySelector('#QG').className = 'QCG';
+            document.querySelector('#NbGM').className = 'goodNbGM';
         }
 
         function affiche_result() {
@@ -1164,6 +1180,7 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
                         }
                     } else {
                         var QCorr = 0;
+                        Result.NbGM = 0;
                         Result.ax0 = 0;
                         Result.ax1 = 0;
                         Result.cx = 0;
@@ -1233,7 +1250,7 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
                 <p>Aussi m'était-il indispensable d'offrir la possibilité de stocker les différentes valeurs obtenues en fonction des paramètres</p>
                 <p>J'ai choisi le format .csv car l'un des plus facile à utiliser et permettant un traitement postérieur avec des outils du type tableur : Excel de MicrosoftOffice , calcs d'OpenOffice mais toute base de données que vous utilisez ;-)</p>
                 <p>Afin de permettre la conservation des données d'une séance à l'autre, j'utilise le 'localStorage'. Attention : cette technologie est propre à chaque navigateur ! Si vous débutez avec firefox, ne vous attendez pas à retrouver vos données sous Chrome ou Edge !</p>
-                <p>La "récupération" de vos donnéees s'effectuera par téléchargement et il sera donc nécessaire de récupérer vos données <=> le fichier résultant sous le répertoire dédié (C:\downloads ou C:\Téléchargements pour les utilisateurs de Windows)</p>
+                <p>La "récupération" de vos donnéees s'effectuera par téléchargement et il sera donc nécessaire de récupérer vos données &lt;=> le fichier résultant sous le répertoire dédié (C:\downloads ou C:\Téléchargements pour les utilisateurs de Windows)</p>
                 <p> Le fichier téléchargé se nommera CorrelImagesTest_date_et_heure.csv. Deux commandes sont à votre disposition :</p>
                 <br>
                 <p> <button id="DownButt" class="styleddr" type="button" onClick="save_result();">Télécharger le fichier</button> et, de temps en temps, <button id="ClearButt" class="styleddr" type="button" onClick="ClearStorage();">Vider vos données du localStorage</button></p>
@@ -1256,7 +1273,7 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
                         </tr><tr>
                             <td>=1</td><td>=2</td><td>Th1</td><td>Th2</td><td>FCNb1</td><td>FCNb2</td><td>OSC1</td><td>OSC2</td><td>MatchP</td><td>RanT</td><td>RanIter</td><td>RatioS</td>
                         </tr><tr>
-                            <td id="egalise_hist1"><a title="égalisation de l'histogramme 1 ?" class='infobulle'><input id="EH1" type="checkbox" checked></a></td><td id="egalise_hist2"><a title="égalisation de l'histogramme 2 ?" class='infobulle'><input id="EH2" type="checkbox" checked></a></td><td id="th1"><a title="valeur du threshold1" class='infobulle'><input type="text" id="TH1inp" minlength="1" maxlength="3" value="30"></a></td><td id="th2"><a title="valeur du threshold2" class='infobulle'><input type="text" id="TH2inp" minlength="1" maxlength="3" value="30"></a></td> <td id="FastCNb1"><a title="nombre de points minimum de fast.counter1" class='infobulle'><input type="text" id="FCNB1inp" minlength="1" maxlength="3" value="600"></a></td><td id="FastCNb2"><a title="nombre de points minimum de fast.counter2" class='infobulle'><input type="text" id="FCNB2inp" minlength="1" maxlength="3" value="600"></a></td><td id="ObjSSC1"><a title="évaluation (+/-10%) du nombre de descripteurs résultant (<450)" class='infobulle'><input type="text" id="OSS1inp" minlength="1" maxlength="3" value="450"></a></td><td id="ObjSSC2"><a title="évaluation (+/-10%) du nombre de descripteurs résultant (<450)" class='infobulle'><input type="text" id="OSS2inp" minlength="1" maxlength="3" value="450"></a></td><td id="MatchP"><a title="méthode de criblage pour les descripteurs correspondants" class='infobulle'><input type="text" id="MatchV" minlength="1" maxlength="4" value="200"></a></td><td id="RanT"><a title="threshold pour recherche des 'bonnes ressemblances'" class='infobulle'><input type="text" id="RanTinp" minlength="1" maxlength="3" value="25"></a></td><td id="RanIter"><a title="nombre d'itérations à effectuer pour obtention des 'bonnes ressemblances'" class='infobulle'><input type="text" id="RanItinp" minlength="1" maxlength="4" value="2500"></a></td><td id="RatioS"><a title="ratio minimal de surface pour accepter correspondance" class='infobulle'><input type="text" id="RatioSinp" minlength="1" maxlength="4" value="0.50"></a></td>                      
+                            <td id="egalise_hist1"><input id="EH1" title="égalisation de l'histogramme 1 ?" type="checkbox" checked></td><td id="egalise_hist2"><input id="EH2" title="égalisation de l'histogramme 2 ?" type="checkbox" checked></td><td id="th1"><input title="valeur du seuil1" type="text" id="TH1inp" minlength="1" maxlength="3" value="30"></td><td id="th2"><input title="valeur du seuil2" type="text" id="TH2inp" minlength="1" maxlength="3" value="30"></td> <td id="FastCNb1"><input type="text" id="FCNB1inp" title="nombre de points minimum de fast.counter1" minlength="1" maxlength="3" value="600"></td><td id="FastCNb2"><input type="text" id="FCNB2inp" title="nombre de points minimum de fast.counter2" minlength="1" maxlength="3" value="600"></td><td id="ObjSSC1"><input title="évaluation (+/-10%) du nombre de descripteurs résultant (<450)" type="text" id="OSS1inp" minlength="1" maxlength="3" value="450"></td><td id="ObjSSC2"><input title="évaluation (+/-10%) du nombre de descripteurs résultant (<450)" type="text" id="OSS2inp" minlength="1" maxlength="3" value="450"></td><td id="MatchP"><input title="méthode de criblage pour les descripteurs correspondants" type="text" id="MatchV" minlength="1" maxlength="4" value="200"></td><td id="RanT"><input title="seuil pour recherche des 'bonnes ressemblances'" type="text" id="RanTinp" minlength="1" maxlength="3" value="25"></td><td id="RanIter"><input title="nombre d'itérations à effectuer pour obtention des 'bonnes ressemblances'" type="text" id="RanItinp" minlength="1" maxlength="4" value="2500"></td><td id="RatioS"><input title="ratio minimal de surface pour accepter correspondance" type="text" id="RatioSinp" minlength="1" maxlength="4" value="0.50"></td>                      
                         </tr>   
                     </tbody></table>
                     <table id="outputsTab"><tbody>
@@ -1269,7 +1286,7 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
                     </tbody></table>
                 </div>
                 <div id="ficselect">
-                    <table id="selectfics"><!--tr><th style="min-width:300px;">Sélection premier fichier</th><th><button id="fback" class="styleddr">back</button></th><th style="min-width:300px;">Sélection second fichier</th></tr-->
+                    <table id="selectfics">
                     <tr>   
                         <td><input id="inp1" type="file"  onchange="previewPicture(this)" accept=".jpg, .png, .gif"></td>
                         <td><button id="f_ok" class="styledvp">ok</button></td>
@@ -1277,7 +1294,7 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
                     </tr></table>
                 </div>
                 <div>
-                    <canvas id="visu">
+                    <canvas id="visu"></canvas>
                 </div>                        
             </div>
             <div id="basdepage">
@@ -1287,13 +1304,13 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
                 </div>
                 <div id="centrebas">Document soumis à licence <a href="https://creativecommons.org/licenses/by/2.0/fr/">Creative Commons "by"</a></div>
                 <div id="droite">
-                    <!--a href="https://jigsaw.w3.org/css-validator/validator?uri=https://aroug.eu/correlimages/index.php"> <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss" alt="CSS Valide !" /> </a-->
-                    <a href="https://jigsaw.w3.org/css-validator/validator?uri=https://aroug.eu/correlimages/index.php"> <img style="border:0;width:88px;height:31px" src="../vcss.gif" alt="CSS Valide !" /> </a>
+                    <a href="https://jigsaw.w3.org/css-validator/validator?uri=https://aroug.eu/correlimages/index.php"> <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss" alt="CSS Valide !" /> </a>
+                    <!--a href="https://jigsaw.w3.org/css-validator/validator?uri=https://aroug.eu/correlimages/index.php"> <img style="border:0;width:88px;height:31px" src="../vcss.gif" alt="CSS Valide !" /> </a-->
                 </div>
-            </div>      <!-- bas de page --->
-        </div>          <!-- menu --->
-        <img id="img1" style="display:none"><img id="img2" style="display:none">
-        <canvas id="Cv1" style="display:none"><canvas id="Cv2" style="display:none">
+            </div>
+        </div>
+        <img id="img1" src="onepoint.png" alt="image1" style="display:none"><img id="img2" src="onepoint.png" alt="image2" style="display:none">
+        <canvas id="Cv1" style="display:none"></canvas><canvas id="Cv2" style="display:none"></canvas>
     </body>
 
     </html>
