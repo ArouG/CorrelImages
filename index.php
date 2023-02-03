@@ -1,6 +1,8 @@
 <?php
 //----------------------------------------
 //          versionning
+// CorrelImages :   1.4 : 2023/02/03
+//                        rajout du nombre de tests sauvegardé dans localStorage (après bouton effacer le localStorage)
 // CorrelImages :   1.3 : 2023/02/02
 //                        lègère modification pour prise en compte (couleurs) du cas ou Nombres de Matches insuffisant
 // CorrelImages :   1.2 : 2023/01/31
@@ -58,7 +60,7 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
   $db = Null; 
 
 /*  variable pour affichage titre / version / nbre de vue   */
-  $Versiondu = 'V 1.3 du 02/02/2023';
+  $Versiondu = 'V 1.4 du 02/02/2023';
 
 ?>
     <!DOCTYPE html>
@@ -836,6 +838,7 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
                 ligne += 'FxAx;FxCx;FyAy;FyCy;BoxOrigxO;BoxOrigyO;BoxOrigxD;BorOrigyD;BoxDestxO;BoxDestyO;BoxDestxD;BoxDestyD'+'\n';
                 localStorage.setItem('Correltest', ligne);
             }
+            document.querySelector("#nblig").textContent = localStorage.getItem("Correltest").split('\n').length-2;
             document.querySelector('#QC').className = 'QCG';
             document.querySelector('#QG').className = 'QCG';
             document.querySelector('#NbGM').className = 'goodNbGM';
@@ -889,6 +892,7 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
             var ligne=localStorage.getItem('Correltest');
             ligne += document.querySelector("#inp1").files[0].name+';'+img1.width+';'+img1.height+';'+document.querySelector("#inp2").files[0].name+';'+img2.width+';'+img2.height+';'+Parinit.egalise_hist1+';'+Parinit.egalise_hist2+';'+Parinit.th1+';'+Parinit.th2+';'+Parinit.FastCNb1+';'+Parinit.FastCNb2+';'+Parinit.ObjSSC1+';'+Parinit.ObjSSC2+';'+Parinit.Mattyp+';'+Parinit.Matval.toString().replace(".",",")+';'+Parinit.RanT+';'+Parinit.RanIter+';'+Parinit.ratioS+';'+parseInt(Result.Tms1G)+';'+parseInt(Result.Tms2G)+';'+parseInt(Result.Tms1Eg)+';'+parseInt(Result.Tms2Eg)+';'+parseInt(Result.TmsFC1)+';'+parseInt(Result.TmsFC2)+';'+parseInt(Result.TmsSSC1)+';'+parseInt(Result.TmsSSC2)+';'+parseInt(Result.TmsM)+';'+parseInt(Result.TmsGM)+';'+parseInt(Result.TmsQG)+';'+parseInt(Result.TmsT)+';'+parseInt(Result.FCDnb1)+';'+parseInt(Result.FCDnb2)+';'+parseInt(Result.NbSSC1)+';'+parseInt(Result.NbSSC2)+';'+parseInt(Result.NbMat)+';'+parseInt(Result.NbGM)+';'+parseInt(Result.QC)+';'+Math.ceil(parseFloat(Result.QG) * 100)+';'+parseFloat(Result.ax1)+';'+parseFloat(Result.cx)+';'+parseFloat(Result.ay1)+';'+parseFloat(Result.cy)+';'+Result.ROxO+';'+Result.ROyO+';'+Result.ROxD+';'+Result.ROyD+';'+Result.RDxO+';'+Result.RDyO+';'+Result.RDxD+';'+Result.RDyD+'\n';
             localStorage.setItem('Correltest',ligne);
+            document.querySelector("#nblig").textContent = localStorage.getItem("Correltest").split('\n').length-2;
         }
 
         async function save_result(){
@@ -927,9 +931,11 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
             ligne += 'TmsFC1;TmsFC2;TmsSSC1;TmsSSC2;TmsMatch;TmsGM;TmsQG;TmsTot;FCnb1;FCnb2;SSCNb1;SSCNb2;MatchNb;GMNb;CoefC;CoefG;';
             ligne += 'FxAx;FxCx;FyAy;FyCy;BoxOrigxO;BoxOrigyO;BoxOrigxD;BorOrigyD;BoxDestxO;BoxDestyO;BoxDestxD;BoxDestyD'+'\n';
             localStorage.setItem('Correltest', ligne);   
+            document.querySelector("#nblig").textContent = localStorage.getItem("Correltest").split('\n').length-2;
         }
 
         function init() {
+            document.querySelector("#nblig").textContent = localStorage.getItem("Correltest").split('\n').length-2;
             document.querySelector("#f_ok").addEventListener('click', async function(e) {
                 e.stopImmediatePropagation();
                 document.querySelector("#f_ok").style.visibility = "hidden";
@@ -1253,7 +1259,7 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
                 <p>La "récupération" de vos donnéees s'effectuera par téléchargement et il sera donc nécessaire de récupérer vos données &lt;=> le fichier résultant sous le répertoire dédié (C:\downloads ou C:\Téléchargements pour les utilisateurs de Windows)</p>
                 <p> Le fichier téléchargé se nommera CorrelImagesTest_date_et_heure.csv. Deux commandes sont à votre disposition :</p>
                 <br>
-                <p> <button id="DownButt" class="styleddr" type="button" onClick="save_result();">Télécharger le fichier</button> et, de temps en temps, <button id="ClearButt" class="styleddr" type="button" onClick="ClearStorage();">Vider vos données du localStorage</button></p>
+                <p> <button id="DownButt" class="styleddr" type="button" onClick="save_result();">Télécharger le fichier</button> et, de temps en temps, <button id="ClearButt" class="styleddr" type="button" onClick="ClearStorage();">Vider vos données du localStorage</button>&nbsp;&nbsp;&nbsp;Nombre de tests enregistrés en cours :&nbsp;<span id="nblig">&nbsp;</span></p>
 
             </div>
             <div id="help" style="display:none">
