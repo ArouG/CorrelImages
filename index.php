@@ -1,6 +1,10 @@
 <?php
 //----------------------------------------
 //          versionning
+// CorrelImages :   1.6 : 2023/02/06
+//                        rajout image dans partie documentation pour mieux illustrer (une image vaut 1000 mots)
+// CorrelImages :   1.5 : 2023/02/03
+//                        partie "Help" détaillée avec le processus global et les paramètres
 // CorrelImages :   1.4 : 2023/02/03
 //                        rajout du nombre de tests sauvegardé dans localStorage (après bouton effacer le localStorage)
 // CorrelImages :   1.3 : 2023/02/02
@@ -60,7 +64,7 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
   $db = Null; 
 
 /*  variable pour affichage titre / version / nbre de vue   */
-  $Versiondu = 'V 1.4 du 02/02/2023';
+  $Versiondu = 'V 1.3 du 06/02/2023';
 
 ?>
     <!DOCTYPE html>
@@ -118,6 +122,25 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
         
         #main, #help, #NameRes {
             min-height: 500px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        #help{
+            text-align: left;
+            font: 1.1em sans-serif;
+        }
+        #help h1{
+            padding-left : 0px;
+            font: 1.2em sans-serif;
+            font-weight: bold;
+        }
+        #help h2{
+            padding-left : 15px;
+            font: 1.15em sans-serif;
+            font-weight: bold;
+        }
+        #help p{
+            padding-left : 30px;
         }
 
         #appelHelp {
@@ -321,6 +344,11 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
         }
         .styleddr:focus{
             outline: 0px;
+        }
+
+        .centre{
+            text-align: center;
+            padding-left:270px;
         }
 
         #selectfics {
@@ -1263,13 +1291,40 @@ function file_ecrit($filename,$data){     // pour gestion des erreurs côté ser
 
             </div>
             <div id="help" style="display:none">
-                <h1>Objectif</h1>
+                <h1>I - Objectif</h1>
                 <p>CorrelImages a pour objectif de mettre au point un nombre, compris entre 0 et 100, permettant d'indiquer le degré de corrélation entre 2 images de dimensions éventuellement différentes, en recherchant une relation telle que, pour tout point P1(x1,y1) (du moins un très grand nombre) de la première image, on puisse associer un point P2(x2,y2) de la seconde tels que :</p>
-                <p> a.x1 + b.x2 + c = 0 ET  d.y1 + e.y2 + f = 0</p>
+                <span class="centre">a.x1 + b.x2 + c = 0 ET  d.y1 + e.y2 + f = 0</span>
                 <P> autrement dit que les deux images soient plus ou moins homothétiques.</p>
                 <p>CorrelImages utilise / met en oeuvre plusieurs techniques liées au traitement d'images. Il utilise principalement la librairie <a href="https://github.com/inspirit/jsfeat" target="_blank">JSFeat.js</a> (passage couleur en b&B, égalisation d'histogramme, détection rapides des points remarquables d'une image, descripteurs ORB et match_pattern) mais aussi des techniques non incluses dans cette librairie : diminution des points remarquables par suppression des non maximaux en vue d'obtenir une distribution "homogène" et l'algorithme de RANSAC pour ce qui concerne la recherche de la "pseudo homothétie"</p>
                 <br>
-                <h1>Politique de cookies :</h1>
+                <h1>II - Algorithme d'ensemble et paramètres</h1>
+                <h2>a) passage d'une image couleur en image à nuance de gris</h2>
+                <p>(aucun paramètre)</p>
+                <h2>b) égalisation éventuelle de l'histogramme (normalisation d'image)</h2>
+                <p>Paramètres : '=1' et '=2' précisent si cet normalisation sera réalisée ou pas</p>
+                <h2>c) détermination des points remarquables par l'algorithme "Fast Corners" (Jsfeat)</h2>
+                <p>Paramètres : 'Th1' (resp. Th2) représente le seuil initial requis et 'FCNb1' (resp. FCNb2) le nombre minimal de points remarquables attendus, espérés au terme de ce process. Le seuil initial sera diminué tant que le nombre minimum de points ne sera pas atteint. ATTENTION : CorrelImages limite le nombre de descripteurs à 500 par image ... rien ne sert de rechercher 1000 point remarquables !</p>
+                <h2>d) diminution des points remarquables avec homogéinisation dans l'espace (ANMS)</h2>
+                <p>Paramètres : 'OSC1' (resp. 'OSC2') représente un objectif (+/- 10%) de réduction des points obtenus par "Fast Corners" (avec homogéinisation dans l'image). Rappel : 500 descripteurs par image; donc OSC1 doit être inférieur ou égal à 450 !</p>
+                <h2>e) créations de descripteurs ORB pour permettre </h2>
+                <p>(aucun paramètre)</p>
+                <h2>f) de "matcher" les descripteurs / points remarquables des deux images</h2>
+                <p>Paramètre : 'MatchP' : 2 méthodes sont implémentées pour la détermination des points remarquables "assimilables" : soit en fixant un seuil "max" (supérieur à 1, initiaement 200) permettant de sélectionner les bonnes paires de points des autres, soit par un facteur compris entre 0 < MatchP < 1 (se conforter au code pour plus de compréhension)</p>
+                <h2>g) et utilisation de Ransac pour filtrer parmi les paires de points récupérées à l'étape précédente celles résultant "au mieux" d'une transformation reliant les 2 images</h2>
+                <p>2 paramètres pour ce process : 'RanT' qui est un seuil maximal (seront sélectionnées les paires de points dont la "distance au modèle sélectionné au hasard" sera inférieure à ce seuil) et 'RanIter' : nombre d'itérations (de modèles) pris au hasard avant de sélectionner le meilleur !</p>
+                <h2>h) Notion de ratio de surface - détermination des 2 blocs communs :</h2>
+                <p>Principalement pour certains type de photos / images (dessins ou images comportant des lettres), le procédé de Ransac aboutit à de fausse corrélations. Généralement, ces faux positifs se rencontrent lorsque l'une ou l'autre des images focalise les points sur une toute petite zône. Or CorrelImages a pour objectif de traiter des images de tailles 'pas trop dissemblables'. Aussi, afin d'écarter / d'éliminer ces faux positifs, on ne conservera des images pour lesquelles les blocs en corrélation seront 'suffisament grands'. D'où ce ratio d'image tel que 0 < RatioS < 1 (initialement = 0.5)</p>
+                <h2>i) calcul de la distance entre ces deux blocks.</h2>
+                <p>(aucun paramètre) : la distance entre les deux images se calculera par la distance moyenne entre les valeurs de gris de ces deux blocs déterminés précédement</p>
+                <br>
+                <h1>III - Illustration :</h1>
+                <img src="help.png" alt="image">
+                <p>Points mauves + points verts = Fnb</p>
+                <p>Points mauves seuls = NbC</p>
+                <p>Lignes bleues = NbGM</p> 
+                <p>Carrés jaunes : Orig et Dest</p>
+                <br>
+                <h1>IV - Politique de cookies :</h1>
                 <p>Correlmages n'utilise qu'un seul cookie 'forcé' (nom = CorrelImages, valeur = nimp) permettant le comptage des visites sur le site</p>
             </div>
             <div id="main">
